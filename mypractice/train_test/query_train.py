@@ -12,7 +12,7 @@ c = ['train_code', 'from_station', 'to_station', 'date', 'time', 'arrive_date', 
          'soft_seat', 'hard_sleep', 'soft_sleep', 'stage_one_seat', 'stage_two_seat', 'sepcial_seat', 'super_soft_seat', \
          'orign_station', 'dest_station', 'leavel', 'stop_by']
 def query_train(from_station, to_station, date):
-
+    
     p = {
             'nmonth4':'05',
             'nmonth4_new_value':'true',
@@ -22,15 +22,15 @@ def query_train(from_station, to_station, date):
             'fromtime_new_value':'true',
             'timerdo':'0',
             'timerdo_new_value':'false',
-            'fromCityTrain':'北京',
+            'fromCityTrain':from_station,
             'fromCityTrain_new_value':'true',
             'trainTransCode':'',
             'trainTransCode_new_value':'true',
-            'toCityTrain':'锦州',
+            'toCityTrain':to_station,
             'toCityTrain_new_value':'true',
             'transCityTrain':'',
             'transCityTrain_new_value':'true',
-            'nmonth6':'05',
+            'nmonth6':'01',
             'nmonth6_new_value':'true',
             'nday6':'21',
             'nday6_new_value':'true',
@@ -88,6 +88,7 @@ def query_train(from_station, to_station, date):
         
     res = urllib2.urlopen(req, data) 
     html = res.read() 
+    print html
     res.close()
     _tag = 'addRow'
     train_lines = []
@@ -132,6 +133,7 @@ def query_train(from_station, to_station, date):
     return return_trains
 
 if __name__ == '__main__':
-    s = query_train('','','')
+    s = query_train('北京','安达','')
+    print s
     for i in s:
         print i

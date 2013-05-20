@@ -9,18 +9,28 @@ import tornado.web
 import tornado.httpserver
 settings = {'debug' : True} #增加autoreload配置
 count = 0
+countA = 0
 class TestHandler(tornado.web.RequestHandler):
-    @tornado.web.asynchronous
     def get(self):
         s = time.time()
-        time.sleep(0.3)
+        time.sleep(0.5)
         self.write('Hello')
         global count 
         count = count +1
-        print count, time.time() - s
-        
+        print 'count', count, time.time() - s
+
+class TestAHandler(tornado.web.RequestHandler):
+    def get(self):
+        s = time.time()
+        time.sleep(0.5)
+        self.write('Hello')
+        global countA 
+        countA = countA +1
+        print 'countA', countA, time.time() - s
+                
 application = tornado.web.Application([
     (r"/", TestHandler),
+    (r"/A", TestAHandler),
      ], **settings)
 
 def startup(port=9090):

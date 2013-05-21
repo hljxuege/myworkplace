@@ -10,12 +10,12 @@ import urllib
 class TestThread(threading.Thread):
     def run(self):
         for i in xrange(100):
-            urllib.urlopen('http://127.0.0.1:9090/').read()
-
+            print urllib.urlopen('http://127.0.0.1:9999').read()
 class TestAThread(threading.Thread):
     def run(self):
+        
         for i in xrange(100):
-            urllib.urlopen('http://127.0.0.1:9090/A').read()
+            print urllib.urlopen('http://127.0.0.1:9999').read()
                     
 if __name__ == '__main__':
     tds = []

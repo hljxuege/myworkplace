@@ -8,15 +8,16 @@ import datetime
 import urllib
 import urllib2
 RequestURL = 'http://dynamic.12306.cn/TrainQuery/iframeTrainInfoByCity.jsp'
-c = ['train_code', 'from_station', 'to_station', 'date', 'time', 'arrive_date', 'arrive_time', 'cost_time', 'hard_seat', \
+c_ticket = ['train_code', 'from_station', 'to_station', 'date', 'time', 'arrive_date', 'arrive_time', 'cost_time', 'hard_seat', \
          'soft_seat', 'hard_sleep', 'soft_sleep', 'stage_one_seat', 'stage_two_seat', 'sepcial_seat', 'super_soft_seat', \
          'orign_station', 'dest_station', 'leavel', 'stop_by']
-def query_train(from_station, to_station, date):
-    
+def query_train(from_station, to_station, date='2013-05-24'):
+    m = date[5:7]
+    d = date[8:]
     p = {
-            'nmonth4':'05',
+            'nmonth4':m,
             'nmonth4_new_value':'true',
-            'nday4':'24',
+            'nday4':d,
             'nday4_new_value':'false',
             'fromtime':'任意时间',
             'fromtime_new_value':'true',
@@ -27,7 +28,7 @@ def query_train(from_station, to_station, date):
             'trainTransCode':'',
             'trainTransCode_new_value':'true',
             'toCityTrain':to_station,
-            'toCityTrain_new_value':'true',
+            'toCityTrain_new_datevalue':'true',
             'transCityTrain':'',
             'transCityTrain_new_value':'true',
             'nmonth6':'01',
@@ -88,7 +89,6 @@ def query_train(from_station, to_station, date):
         
     res = urllib2.urlopen(req, data) 
     html = res.read() 
-    print html
     res.close()
     _tag = 'addRow'
     train_lines = []
@@ -128,12 +128,12 @@ def query_train(from_station, to_station, date):
         _need_date = _date + datetime.timedelta(seconds=seconds)
         _l_5 = _need_date.date().strftime('%Y%m%d')
         return_line[5] = _l_5
-        return_trains.append(dict(zip(c, return_line)))
+        return_trains.append(dict(zip(c_ticket, return_line)))
                                     
     return return_trains
 
 if __name__ == '__main__':
-    s = query_train('北京','安达','')
+    s = query_train('北京','沈阳','2013-05-30')
     print s
     for i in s:
         print i

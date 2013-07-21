@@ -7,7 +7,7 @@ Created on May 19, 2013
 import time
 import tornado.web
 import tornado.httpserver
-settings = {'debug' : True} #增加autoreload配置
+settings = {'debug' : True, 'gzip':True} #增加autoreload配置
 count = 0
 countA = 0
 class TestHandler(tornado.web.RequestHandler):
@@ -20,13 +20,14 @@ class TestHandler(tornado.web.RequestHandler):
         print 'count', count, time.time() - s
 
 class TestAHandler(tornado.web.RequestHandler):
+    countA = 0
     def get(self):
+         
         s = time.time()
         time.sleep(0.5)
         self.write('Hello')
-        global countA 
-        countA = countA +1
-        print 'countA', countA, time.time() - s
+        self.countA = self.countA +1
+        print 'countA', self.countA, time.time() - s
                 
 application = tornado.web.Application([
     (r"/", TestHandler),

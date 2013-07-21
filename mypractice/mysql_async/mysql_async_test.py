@@ -18,6 +18,7 @@ def example():
     # This gets remembered and re-run if the connection needs reconnection
     d = conn.selectDb("test")
     def selectedDb(ignored):
+        
         return conn.runOperation("select * from users")
     d.addCallback(selectedDb)
     def doneInsert(ignored):

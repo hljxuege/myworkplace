@@ -1,0 +1,61 @@
+#encoding:utf-8
+'''
+Created on Jul 28, 2013
+
+@author: liuxue
+'''
+import datetime
+import redis
+import tornado.httpserver
+import tornado.web
+settings = {'debug' : True, 'gzip':True} #增加autoreload配置
+
+
+
+class RedisPool(object):
+    pool = None
+    conn = None
+    
+    @staticmethod
+    def get_pool():
+        if not RedisPool.pool:
+            RedisPool.pool = redis.ConnectionPool(host='127.0.0.1', port=6379, db=2, socket_timeout=5)
+        return RedisPool.pool
+        
+    @staticmethod
+    def get_redis():
+        return redis.Redis(connection_pool=RedisPool.get_pool())
+        
+
+def get_redis():
+    return RedisPool.get_redis()
+
+class CalcuteHandler(tornado.web.RequestHandler):
+    def get(self):
+        pass
+
+    def on_finish(self):
+        self._log_request_times()
+        
+    def _log_request_times(self):
+        request_time = 1000.0 * self.request.request_time()
+        _split_uris = self.request.uri.split('/')
+        name = 'T' + '.'.join(i for i in _split_uris if i)
+        now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        r = get_redis()
+        print name
+        r.hincrby(now_date, name)
+        
+        r.rpush(':'.join([now_date, name]), '%.2f'%request_time)
+                
+application = tornado.web.Application([
+    (r"/*", CalcuteHandler),
+     ], **settings)
+
+def startup(port=9090):
+    server = tornado.httpserver.HTTPServer(application)
+    server.listen(port)
+    tornado.ioloop.IOLoop.instance().start()
+    
+if __name__ == '__main__':
+    startup()

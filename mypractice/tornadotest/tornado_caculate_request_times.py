@@ -30,16 +30,28 @@ class RedisPool(object):
 def get_redis():
     return RedisPool.get_redis()
 
+def get_r(name):
+    r = get_redis()
+    keys = r.hkeys(name)
+    _l = len(keys)
+    for k in keys:
+        print r.hget(name, k)
+        print r.lrange('%s:%s'%(name, k), 0, _l)
+    
 class CalcuteHandler(tornado.web.RequestHandler):
     def get(self):
         pass
 
     def on_finish(self):
+        print 1000.0 * self.request.request_time()#请求时间不变
         self._log_request_times()
+        print 1000.0 * self.request.request_time()#请求时间不变
         
     def _log_request_times(self):
-        request_time = 1000.0 * self.request.request_time()
+        request_time = 1000.0 * self.request.request_time()#请求时间不变
         _split_uris = self.request.uri.split('/')
+        import time
+        time.sleep(2)
         name = 'T' + '.'.join(i for i in _split_uris if i)
         now_date = datetime.datetime.now().strftime('%Y-%m-%d')
         r = get_redis()
@@ -58,4 +70,6 @@ def startup(port=9090):
     tornado.ioloop.IOLoop.instance().start()
     
 if __name__ == '__main__':
+    get_r('2013-07-28')
     startup()
+    

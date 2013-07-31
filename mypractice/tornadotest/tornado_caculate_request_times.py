@@ -38,6 +38,8 @@ def get_r(name):
         print r.hget(name, k)
         print r.lrange('%s:%s'%(name, k), 0, _l)
     
+    #入库　日期，　名称，次数，平均响应时间，　最小时间，　最大时间
+    #生成时间日志　　yyyy-mm-dd.log >> name : value [, value1 ...]
 class CalcuteHandler(tornado.web.RequestHandler):
     def get(self):
         pass

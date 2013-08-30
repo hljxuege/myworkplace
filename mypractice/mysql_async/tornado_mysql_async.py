@@ -16,7 +16,7 @@ class EPollConnection(Connection):
         non-blocking mysql connection
         for tornado ioloop
     """
-    def epoll_query(self, query, callback, on_error=None, args=None):
+    def epoll_query(self, query, callback=None, on_error=None, args=None):
         """ Non-blocking query. callback is function that takes list
             of tuple args """
         self.send_query(query)
@@ -49,8 +49,8 @@ class EPollConnection(Connection):
 class MainHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
-        conn=EPollConnection(host="192.168.0.111",user="root",passwd="root",db="test",charset="utf8")
-        conn.epoll_query("select * from users",callback=self.do_res)
+        conn=EPollConnection(host="192.168.0.111",user="babby",passwd="love",db="babbylove",charset="utf8")
+        conn.epoll_query("select * from user",callback=self.do_res)
 
     def do_res(self,res):
         self.finish('xxx'+json.dumps(res))
@@ -62,10 +62,27 @@ class MainHandler(tornado.web.RequestHandler):
                    handler._request_summary(), request_time)
         
         
-        self.log_request(handler)       
+        self.log_request(handler)
+
+def do_res(res):
+    return res               
+from tornado import gen        
+class MysqlAsyncHandler(tornado.web.RequestHandler):
+        
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self):
+        a = int(self.get_argument('a', 20))
+        
+        print a
+        self.conn=EPollConnection(host="192.168.0.111",user="babby",passwd="love",db="babbylove",charset="utf8")
+        r = yield gen.Task(self.conn.epoll_query, "select sleep(%s)"%a)
+        print '%s f'%a
+        self.finish()
         
 application = tornado.web.Application([
     (r"/", MainHandler),
+    (r"/m1", MysqlAsyncHandler),
      ], **{})
 
 def startup(port=9090):

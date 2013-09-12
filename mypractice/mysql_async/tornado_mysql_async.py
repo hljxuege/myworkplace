@@ -4,8 +4,9 @@ Created on Jul 16, 2013
 @author: liuxue
 '''
 from MySQLdb.connections import Connection
+from MySQLdb.cursors import DictCursor
 from functools import partial
-from tornado import ioloop
+from tornado import gen, ioloop
 import json
 import logging
 import tornado.httpserver
@@ -49,7 +50,7 @@ class EPollConnection(Connection):
 class MainHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
-        conn=EPollConnection(host="192.168.0.111",user="babby",passwd="love",db="babbylove",charset="utf8")
+        conn=EPollConnection(host="192.168.0.111",user="babby",passwd="love",db="babbylove",charset="utf8", connect_timeout=5)
         conn.epoll_query("select * from user",callback=self.do_res)
 
     def do_res(self,res):
@@ -65,8 +66,10 @@ class MainHandler(tornado.web.RequestHandler):
         self.log_request(handler)
 
 def do_res(res):
-    return res               
-from tornado import gen        
+    return res           
+def get_conn(*args):
+    return EPollConnection(host="192.168.0.111",user="babby",passwd="love",db="babbylove",charset="utf8", cursorclass=DictCursor, connect_timeout=5)
+        
 class MysqlAsyncHandler(tornado.web.RequestHandler):
         
     @tornado.web.asynchronous
@@ -75,11 +78,15 @@ class MysqlAsyncHandler(tornado.web.RequestHandler):
         a = int(self.get_argument('a', 20))
         
         print a
-        self.conn=EPollConnection(host="192.168.0.111",user="babby",passwd="love",db="babbylove",charset="utf8")
+        self.conn = get_conn()
         r = yield gen.Task(self.conn.epoll_query, "select sleep(%s)"%a)
         print '%s f'%a
         self.finish()
-        
+    
+    def on_finish(self):
+        if self.conn:
+            self.conn.close()
+         
 application = tornado.web.Application([
     (r"/", MainHandler),
     (r"/m1", MysqlAsyncHandler),

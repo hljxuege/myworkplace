@@ -7,7 +7,10 @@ Created on Oct 25, 2013
 '''
 use redis as lock
 '''
+
+from functools import wraps
 import redis
+
 
 class RedisPool(object):
     pool = None
@@ -27,8 +30,37 @@ class RedisPool(object):
 def get_redis():
     return RedisPool.get_redis()
 
-def get_lock(key, exp):
-    pass
+def period_lock(key, val='1', exp=0):
+    conn = get_redis()
+    r = conn.setnx(key, val)
+    if r:
+        if exp:
+            conn.setex(key, exp, val)
+        #add func todo
+    else:
+        pass
 
+def period_loc_dec(key, val='1', exp=0):
+    def _decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwds):
+            conn = get_redis()
+            r = conn.setnx(key, val)
+
+            if r:
+                print 'GET LOCK'
+                if exp:
+                    print 'SET EXPRIOD'
+                    conn.setex(key, val, exp)
+                return func(*args, **kwds)
+            else:
+                print 'GET NOTHING'
+            
+        return wrapper
+    return _decorator
+ 
 if __name__ == '__main__':
-    get_lock() 
+    @period_loc_dec('A', exp=10)
+    def test_func():
+        return 'A'*2 
+    print test_func() 

@@ -21,12 +21,12 @@ def chang_param_to_gb2312(p):
     return r
 
 if __name__ == '__main__':
-    if __file__ != 'fake_callback.py':
-        raise 'Bad File name'
+#     if __file__ != 'fake_callback.py':
+#         raise 'Bad File name'
     _p = {
         'data' : u'',
         'MsgType' : u'FR',
-        'Validate' : u'EVENT3-11(ID:376)',
+        'Validate' : u'模拟',
     }
     p = urllib.urlencode(chang_param_to_gb2312(_p))
     req = urllib2.Request(url, data=p)

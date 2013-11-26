@@ -30,11 +30,11 @@ class TestAHandler(tornado.web.RequestHandler):
         print 'countA', self.countA, time.time() - s
                 
 application = tornado.web.Application([
-    (r"/", TestHandler),
+    (r"/app", TestHandler),
     (r"/A", TestAHandler),
      ], **settings)
 
-def startup(port=9090):
+def startup(port=9891):
     server = tornado.httpserver.HTTPServer(application)
     server.listen(port)
     tornado.ioloop.IOLoop.instance().start()

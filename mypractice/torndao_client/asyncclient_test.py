@@ -6,24 +6,31 @@ Created on Sep 11, 2013
 '''
 from tornado import gen
 from tornado.httpclient import AsyncHTTPClient, HTTPRequest
+from web import http
 import tornado.httpserver
 import tornado.web
 import urllib
+@gen.engine
+def _process(url='', p=''):
+    request = HTTPRequest('http://192.168.0.36:21010/base/invoice/getCategory', method='POST', body=urllib.urlencode(dict(a=1)))
+    http = AsyncHTTPClient()    
+    yield gen.Task(http.fetch, request)
+        
 class MainHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
-    @gen.engine
+#     @gen.engine
     def get(self):
-        http = AsyncHTTPClient()
         p = dict(a=1, b=2)
-        request = HTTPRequest('http://192.168.0.36:21010/base/invoice/getCategory', method='POST', body=urllib.urlencode(dict(a=1)))
-        
-        response = yield gen.Task(http.fetch, request)
+        response = _process()
+#         request = HTTPRequest('http://192.168.0.36:21010/base/invoice/getCategory', method='POST', body=urllib.urlencode(dict(a=1)))
+#         http = AsyncHTTPClient()    
+#         response = yield gen.Task(http.fetch, request)
         print response
-        if response.body:
-            a = 1
-        self.write('09')
+        if response:
+            self.write(response.body)
+        self.write('-')
         self.finish()
-        
+    
 application = tornado.web.Application([
     (r"/", MainHandler),
 ], **{})

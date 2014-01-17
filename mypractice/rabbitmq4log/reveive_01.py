@@ -5,7 +5,6 @@ Created on Dec 28, 2013
 @author: liuxue
 '''
 import pika
-import sys
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
         host='localhost'))
@@ -17,7 +16,7 @@ channel.exchange_declare(exchange='direct_logs',
 result = channel.queue_declare(exclusive=True)
 queue_name = result.method.queue
 
-severities = ['info', 'warning']
+severities = ['info', 'error']
 
 for severity in severities:
     channel.queue_bind(exchange='direct_logs',

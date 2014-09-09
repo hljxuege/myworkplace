@@ -1,0 +1,11 @@
+eclipse.preferences.version=1
+encoding//configs/config.py=utf-8
+encoding//errors/baserror.py=utf-8
+encoding//handlers/basehandler.py=utf-8
+encoding//handlers/mainhandler.py=utf-8
+encoding//services/baseservice.py=utf-8
+encoding//services/otherservice.py=utf-8
+encoding//util/except_util.py=utf-8
+encoding//util/redisutil.py=utf-8
+encoding/__dump__.py=utf-8
+encoding/gateway.py=utf-8

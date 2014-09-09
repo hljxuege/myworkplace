@@ -1,0 +1,15 @@
+MYSQL:
+  host : 127.0.0.1
+  port : 3306
+  name : stone
+  user : stone
+  pswd : stone
+  timeout : 5
+
+REDIS:
+  host : 127.0.0.1
+  port : 6379
+  name : 0
+  timeout : 5
+
+    

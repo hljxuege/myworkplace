@@ -10,24 +10,45 @@ import tornado.httpserver
 settings = {'debug' : True, 'gzip':True} #增加autoreload配置
 count = 0
 countA = 0
+def sendemail():
+    import smtplib
+    from email.mime.text import MIMEText
+    host = '202.85.210.134'
+    port = 25
+    user = 'mbanking@infohold.com.cn'
+    pwd = 'smt_email0416'
+    sender = user
+    mailto = '570863597@qq.com'
+    
+    #邮件信息
+    content = '''
+        您好,%s<br><br>
+        您的验证码为：%s<br><br>
+        温馨提示：该验证码有效期为%s，如逾期请重新获取验证码。<br><br>
+        这是一封系统生成的邮件，请勿回复。'''# % (username, unlocking_code, validTimeDelta)
+    msg = MIMEText(content, 'html', 'utf-8')
+    msg['Subject'] = 'No Reply'
+    msg['to'] = mailto
+    msg['From'] = sender
+    
+    #连接发送服务器
+    smtp = smtplib.SMTP(host, 5)
+    smtp.login(user, pwd)
+    
+    #发送
+    smtp.sendmail(sender,mailto,msg.as_string())
+    smtp.quit()
+
+
 class TestHandler(tornado.web.RequestHandler):
     def get(self):
-        s = time.time()
-        time.sleep(0.5)
         self.write('Hello')
-        global count 
-        count = count +1
-        print 'count', count, time.time() - s
 
 class TestAHandler(tornado.web.RequestHandler):
     countA = 0
     def get(self):
-         
-        s = time.time()
-        time.sleep(0.5)
-        self.write('Hello')
-        self.countA = self.countA +1
-        print 'countA', self.countA, time.time() - s
+        tornado.ioloop.IOLoop.instance().run_sync(sendemail, 20)
+        self.write('1')
                 
 application = tornado.web.Application([
     (r"/app", TestHandler),

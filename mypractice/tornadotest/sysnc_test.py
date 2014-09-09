@@ -10,7 +10,7 @@ from tornado.options import define
 from tornado.web import asynchronous
 import time
 import tornado.web
-pretend_service_url = 'http://www.baidu.com'
+pretend_service_url = 'http://192.168.0.36:21010/a'
 class PretendService(tornado.web.RequestHandler):
     def head(self):
         pass
@@ -53,6 +53,7 @@ class MainHandlerAsync(tornado.web.RequestHandler):
         client.fetch(pretend_service_url, self._finish_req)
         
     def _finish_req(self, s):
+        print s.request.url
         self.finish('over')
      
 application = tornado.web.Application([
